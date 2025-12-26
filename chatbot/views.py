@@ -37,37 +37,8 @@ def chat_api(request):
         
         genai.configure(api_key=api_key)
         
-        # Try to get available models and select the best one
-        try:
-            models = genai.list_models()
-            available_models = [m.name for m in models if 'generateContent' in m.supported_generation_methods]
-            
-            # Preferred models in order of preference
-            preferred_models = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro']
-            model_name = None
-            
-            for preferred in preferred_models:
-                for available in available_models:
-                    if preferred in available:
-                        model_name = available
-                        break
-                if model_name:
-                    break
-            
-            # If no preferred model found, use first available
-            if not model_name and available_models:
-                model_name = available_models[0]
-            
-            # Fallback to default if nothing works
-            if not model_name:
-                model_name = 'gemini-1.5-flash'
-                
-        except Exception:
-            # Fallback to default model if listing fails
-            model_name = 'gemini-1.5-flash'
-        
         # Create the model
-        model = genai.GenerativeModel(model_name)
+        model = genai.GenerativeModel("gemini-2.5-flash")
         
         # Create a pharmacy-focused prompt
         pharmacy_prompt = f"""
