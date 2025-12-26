@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block title %}ML Prediction - PharmaRootz{% endblock %}
+{% load widget_tweaks %}
+
+<style>
+/* Style for radio buttons */
+.form-check {
+    margin-bottom: 0.5rem;
+}
+
+.form-check-input {
+    margin-right: 0.5rem;
+}
+
+.form-check-label {
+    cursor: pointer;
+    font-weight: 500;
+}
+</style>
+{% block content %}
+<div class="container mt-5">
+    <!-- Error Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="row g-4">
+        <!-- Prediction Form -->
+        <div class="col-md-6">
+            <div class="card shadow-sm rounded-4 border-0">
+                <div class="card-header bg-success text-white rounded-top-4">
+                    <h4 class="mb-0"><i class="fas fa-brain me-2"></i>Machine Learning Prediction</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Prediction Type -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold"><i class="fas fa-chart-line me-2"></i>Prediction Type *</label>
+                            {{ form.prediction_type }}
+                            {% if form.prediction_type.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.prediction_type.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Algorithm Selection -->
+                        <div class="mb-3">
+                            <label for="{{ form.algorithm.id_for_label }}" class="form-label fw-bold"><i class="fas fa-cogs me-2"></i>Algorithm *</label>
+                            {{ form.algorithm|add_class:"form-select rounded-pill" }}
+                            {% if form.algorithm.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.algorithm.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Features -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.manufacturing_year.id_for_label }}" class="form-label fw-bold"><i class="fas fa-calendar me-2"></i>Manufacturing Year *</label>
+                                {{ form.manufacturing_year|add_class:"form-control rounded-pill" }}
+                                {% if form.manufacturing_year.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.manufacturing_year.errors %}
+                                            <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.expiry_year.id_for_label }}" class="form-label fw-bold"><i class="fas fa-calendar me-2"></i>Expiry Year *</label>
+                                {{ form.expiry_year|add_class:"form-control rounded-pill" }}
+                                {% if form.expiry_year.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.expiry_year.errors %}
+                                            <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3 mt-3" id="quantity_field">
+                            <label for="{{ form.quantity.id_for_label }}" class="form-label fw-bold"><i class="fas fa-sort-numeric-up me-2"></i>Quantity *</label>
+                            {{ form.quantity|add_class:"form-control rounded-pill" }}
+                            {% if form.quantity.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.quantity.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3" id="price_field" style="display: none;">
+                            <label for="{{ form.price.id_for_label }}" class="form-label fw-bold"><i class="fa-solid fa-indian-rupee-sign text-dark"></i> Price *</label>
+                            {{ form.price|add_class:"form-control rounded-pill" }}
+                            {% if form.price.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.price.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success btn-lg rounded-pill shadow-sm"><i class="fas fa-magic me-2"></i>Generate Prediction</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prediction Result -->
+        <div class="col-md-6">
+            {% if prediction_result %}
+            <div class="card shadow-sm rounded-4 border-0">
+                <div class="card-header bg-primary text-white rounded-top-4">
+                    <h4 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Prediction Result</h4>
+                </div>
+                <div class="card-body text-center">
+                    <i class="fas fa-robot fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Predicted {{ prediction_result.type }}</h5>
+                    <h2 class="text-success mb-2">{{ prediction_result.value }}</h2>
+                    <p class="text-muted mb-2">{{ prediction_result.details }}</p>
+                    <p class="text-info"><i class="fas fa-brain me-2"></i>Algorithm used: {{ prediction_result.algorithm }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Charts -->
+    {% if charts %}
+    <div class="row mt-4 g-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm rounded-4 border-0">
+                <div class="card-header bg-info text-white rounded-top-4">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Model Performance</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="data:image/png;base64,{{ charts.comparison }}" alt="Model Comparison" class="img-fluid rounded-4 shadow-sm">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm rounded-4 border-0">
+                <div class="card-header bg-warning text-white rounded-top-4">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Price Distribution</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="data:image/png;base64,{{ charts.price_distribution }}" alt="Price Distribution" class="img-fluid rounded-4 shadow-sm">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm rounded-4 border-0">
+                <div class="card-header bg-success text-white rounded-top-4">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Quantity vs Price</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="data:image/png;base64,{{ charts.quantity_vs_price }}" alt="Quantity vs Price" class="img-fluid rounded-4 shadow-sm">
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- How It Works -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm rounded-4 border-0">
+                <div class="card-header bg-secondary text-white rounded-top-4">
+                    <h4 class="mb-0"><i class="fas fa-info-circle me-2"></i>How It Works</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-robot me-2"></i>Machine Learning Models</h5>
+                            <ul class="list-unstyled mb-0">
+                                <li><i class="fas fa-check text-success me-2"></i>Linear Regression</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Polynomial Regression</li>
+                                <li><i class="fas fa-check text-success me-2"></i>K-Nearest Neighbors (KNN)</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Decision Tree</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-lightbulb me-2"></i>Features Used</h5>
+                            <ul class="list-unstyled mb-0">
+                                <li><i class="fas fa-calendar text-primary me-2"></i>Manufacturing Year</li>
+                                <li><i class="fas fa-calendar text-primary me-2"></i>Expiry Year</li>
+                                <li><i class="fas fa-sort-numeric-up text-primary me-2"></i>Quantity</li>
+                                <li><i class="fas fa-dollar-sign text-primary me-2"></i>Price</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const predictionTypeRadios = document.querySelectorAll('input[name="prediction_type"]');
+    const quantityField = document.getElementById('quantity_field');
+    const priceField = document.getElementById('price_field');
+
+    function toggleFields() {
+        const selectedValue = document.querySelector('input[name="prediction_type"]:checked').value;
+        if (selectedValue === 'price') {
+            quantityField.style.display = 'block';
+            priceField.style.display = 'none';
+        } else {
+            quantityField.style.display = 'none';
+            priceField.style.display = 'block';
+        }
+    }
+
+    predictionTypeRadios.forEach(radio => {
+        radio.addEventListener('change', toggleFields);
+    });
+
+    // Initial setup
+    if (predictionTypeRadios.length > 0) {
+        toggleFields();
+    }
+});
+</script>
+{% endblock %}

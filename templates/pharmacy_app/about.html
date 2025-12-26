@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - PharmaRootz{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-r from-blue-50 via-white to-green-50 py-16 shadow-inner">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold text-primary tracking-tight mb-3 animate__animated animate__fadeInDown">
+            <i class="fas fa-info-circle me-2"></i> About <span class="text-success">PharmaRootz</span>
+        </h1>
+        <p class="lead text-secondary animate__animated animate__fadeInUp">
+            Your trusted healthcare partner since 2025
+        </p>
+    </div>
+</section>
+
+<div class="container my-5">
+    <!-- Mission & Vision -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-6">
+            <div class="card h-100 border-0 shadow-lg hover:scale-105 transition-transform duration-300 rounded-3">
+                <div class="card-body p-5">
+                    <h3 class="card-title mb-3 text-success">
+                        <i class="fas fa-heart me-2"></i> Our Mission
+                    </h3>
+                    <p class="text-muted fs-6">
+                        To provide high-quality pharmaceutical products and healthcare services to our community, 
+                        ensuring accessibility, affordability, and excellence in customer care.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card h-100 border-0 shadow-lg hover:scale-105 transition-transform duration-300 rounded-3">
+                <div class="card-body p-5">
+                    <h3 class="card-title mb-3 text-primary">
+                        <i class="fas fa-eye me-2"></i> Our Vision
+                    </h3>
+                    <p class="text-muted fs-6">
+                        To become the leading pharmacy chain, known for innovation, reliability, and commitment 
+                        to improving community health through advanced technology and personalized care.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Why Choose Us -->
+    <div class="card border-0 shadow-lg mb-5 rounded-4 overflow-hidden">
+        <div class="card-header bg-primary text-white py-4">
+            <h3 class="mb-0 fw-semibold">
+                <i class="fas fa-star me-2"></i> Why Choose Us?
+            </h3>
+        </div>
+        <div class="card-body py-5">
+            <div class="row text-center g-4">
+                <div class="col-md-3">
+                    <i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
+                    <h5 class="fw-bold">Quality Assurance</h5>
+                    <p class="text-muted small">All products are sourced from certified manufacturers</p>
+                </div>
+                <div class="col-md-3">
+                    <i class="fas fa-clock fa-3x text-primary mb-3"></i>
+                    <h5 class="fw-bold">24/7 Service</h5>
+                    <p class="text-muted small">Round-the-clock availability for emergencies</p>
+                </div>
+                <div class="col-md-3">
+                    <i class="fas fa-user-md fa-3x text-warning mb-3"></i>
+                    <h5 class="fw-bold">Expert Staff</h5>
+                    <p class="text-muted small">Qualified pharmacists and healthcare professionals</p>
+                </div>
+                <div class="col-md-3">
+                    <i class="fas fa-truck fa-3x text-info mb-3"></i>
+                    <h5 class="fw-bold">Fast Delivery</h5>
+                    <p class="text-muted small">Quick and reliable delivery service</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technology -->
+    <div class="card border-0 shadow-lg mb-5 rounded-4 overflow-hidden">
+        <div class="card-header bg-success text-white py-4">
+            <h3 class="mb-0 fw-semibold">
+                <i class="fas fa-cogs me-2"></i> Our Technology
+            </h3>
+        </div>
+        <div class="card-body py-5">
+            <div class="row g-5">
+                <div class="col-md-6">
+                    <h5 class="fw-bold text-primary mb-3">
+                        <i class="fas fa-brain me-2"></i> Machine Learning
+                    </h5>
+                    <p class="text-muted">Advanced AI algorithms for price and quantity prediction, helping customers make informed decisions.</p>
+                    <ul class="list-unstyled ms-3">
+                        <li>✔ Linear Regression</li>
+                        <li>✔ Polynomial Regression</li>
+                        <li>✔ K-Nearest Neighbors</li>
+                        <li>✔ Decision Trees</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="fw-bold text-success mb-3">
+                        <i class="fas fa-database me-2"></i> Smart Inventory
+                    </h5>
+                    <p class="text-muted">Real-time inventory management with automated alerts for low stock and expiry dates.</p>
+                    <ul class="list-unstyled ms-3">
+                        <li>✔ Stock monitoring</li>
+                        <li>✔ Expiry tracking</li>
+                        <li>✔ Automated reordering</li>
+                        <li>✔ Analytics dashboard</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team -->
+    <div class="card border-0 shadow-lg mb-5 rounded-4 overflow-hidden">
+        <div class="card-header bg-info text-white py-4">
+            <h3 class="mb-0 fw-semibold">
+                <i class="fas fa-users me-2"></i> Our Team
+            </h3>
+        </div>
+        <div class="card-body text-center py-5">
+            <p class="text-muted mb-4 fs-6">
+                Our dedicated team of healthcare professionals, pharmacists, and technology experts 
+                work together to provide you with the best possible service and care.
+            </p>
+            <a href="{% url 'contact' %}" class="btn btn-lg btn-primary px-5 py-3 rounded-pill shadow hover:scale-105 transition-transform">
+                <i class="fas fa-envelope me-2"></i> Contact Our Team
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

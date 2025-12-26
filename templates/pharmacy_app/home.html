@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - PharmaRootz{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <h1 class="display-4 fw-bold">
+            <i class="fas fa-pills me-3"></i>Welcome to PharmaRootz
+        </h1>
+        <p class="lead">Your trusted partner for quality healthcare and pharmaceutical solutions</p>
+        <div class="mt-4">
+            <a href="{% url 'user_type_selection' %}" class="btn btn-light btn-lg me-3">
+                <i class="fas fa-user-plus me-2"></i>Get Started
+            </a>
+            <a href="{% url 'about' %}" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-info-circle me-2"></i>Learn More
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="row mb-5">
+    <div class="col-md-4">
+        <div class="stats-card">
+            <i class="fas fa-pills text-warning"></i>
+            <h3>{{ total_medicines }}</h3>
+            <p class="mb-0">Available Medicines</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card">
+            <i class="fas fa-users text-info"></i>
+            <h3>{{ total_customers }}</h3>
+            <p class="mb-0">Happy Customers</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card">
+            <i class="fas fa-shield-alt text-success"></i>
+            <h3>24/7</h3>
+            <p class="mb-0">Support Available</p>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Medicines -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="text-center mb-4">
+            <i class="fas fa-star text-warning me-2"></i>Featured Medicines
+        </h2>
+    </div>
+    
+    {% if medicines %}
+        {% for medicine in medicines %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-pills fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">{{ medicine.m_name }}</h5>
+                    <p class="card-text text-muted">{{ medicine.m_descr|truncatewords:10 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-success">₹{{ medicine.m_price }}</span>
+                        <span class="badge bg-info">{{ medicine.m_quantity }} units</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 text-center">
+                    <small class="text-muted">
+                        <i class="fas fa-calendar me-1"></i>
+                        Expires: {{ medicine.m_edate }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12 text-center">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                No medicines available at the moment. Please check back later.
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Features Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="text-center mb-4">
+            <i class="fas fa-cogs text-primary me-2"></i>Why Choose Us?
+        </h2>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
+                <h5 class="card-title">Quality Assurance</h5>
+                <p class="card-text">All medicines are sourced from certified manufacturers and undergo strict quality checks.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-clock fa-3x text-primary mb-3"></i>
+                <h5 class="card-title">24/7 Availability</h5>
+                <p class="card-text">Round-the-clock service to meet your healthcare needs at any time.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-user-md fa-3x text-warning mb-3"></i>
+                <h5 class="card-title">Expert Consultation</h5>
+                <p class="card-text">Professional pharmacists available to provide guidance and answer your questions.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-truck fa-3x text-info mb-3"></i>
+                <h5 class="card-title">Fast Delivery</h5>
+                <p class="card-text">Quick and reliable delivery service to your doorstep.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="row">
+    <div class="col-12">
+        <div class="card text-white text-center" 
+             style="background: linear-gradient(135deg, #0dcaf0, #0d6efd); border-radius: 18px; box-shadow: 0 6px 20px rgba(0,0,0,0.25);">
+            <div class="card-body py-5">
+                <h3 class="card-title mb-3" style="font-weight:700;">
+                    <i class="fas fa-quote-left me-2"></i> 
+                    Ready to Get Started? 
+                    <i class="fas fa-quote-right ms-2"></i>
+                </h3>
+                <p class="card-text mb-4" style="font-size:1.1rem;">
+                    Join <span style="font-weight:600; color:#ffdd57;">thousands of satisfied customers</span> 
+                    who trust us with their healthcare needs.
+                </p>
+                <a href="{% url 'user_type_selection' %}" 
+                   class="btn btn-success btn-lg fw-bold shadow-lg px-4 py-2"
+                   style="border-radius: 30px; transition: all 0.3s ease;">
+                    <i class="fas fa-arrow-right me-2"></i>Start Now
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+
+</style>
+
+
+{% endblock %}

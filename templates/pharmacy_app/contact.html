@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us - PharmaRootz{% endblock %}
+
+{% block content %}
+<div class="hero-section bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-5 shadow-lg">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-2">
+            <i class="fas fa-envelope me-3"></i>Contact Us
+        </h1>
+        <p class="lead">Get in touch with our healthcare experts</p>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row g-4">
+        <!-- Contact Form -->
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-primary text-white py-3 rounded-top">
+                    <h3 class="mb-0">
+                        <i class="fas fa-paper-plane me-2"></i>Send us a Message
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="firstName" class="form-label fw-semibold">First Name *</label>
+                                <input type="text" class="form-control shadow-sm" id="firstName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lastName" class="form-label fw-semibold">Last Name *</label>
+                                <input type="text" class="form-control shadow-sm" id="lastName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label fw-semibold">Email *</label>
+                                <input type="email" class="form-control shadow-sm" id="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label fw-semibold">Phone Number</label>
+                                <input type="tel" class="form-control shadow-sm" id="phone">
+                            </div>
+                            <div class="col-12">
+                                <label for="subject" class="form-label fw-semibold">Subject *</label>
+                                <select class="form-select shadow-sm" id="subject" required>
+                                    <option value="">Choose a subject</option>
+                                    <option value="general">General Inquiry</option>
+                                    <option value="medicine">Medicine Information</option>
+                                    <option value="order">Order Status</option>
+                                    <option value="complaint">Complaint</option>
+                                    <option value="suggestion">Suggestion</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="message" class="form-label fw-semibold">Message *</label>
+                                <textarea class="form-control shadow-sm" id="message" rows="5" required placeholder="Please describe your inquiry in detail..."></textarea>
+                            </div>
+                            <div class="col-12 d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4 border-0 rounded-3">
+                <div class="card-header bg-success text-white rounded-top">
+                    <h4 class="mb-0">
+                        <i class="fas fa-map-marker-alt me-2"></i>Our Location
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2"><i class="fas fa-building me-2 text-primary"></i><strong>PharmaRootz</strong></p>
+                    <p><i class="fas fa-map-marker-alt me-2 text-danger"></i>123 Healthcare Street<br>Medical District<br>Ahemdabad, Gujarat 382350</p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4 border-0 rounded-3">
+                <div class="card-header bg-info text-white rounded-top">
+                    <h4 class="mb-0">
+                        <i class="fas fa-clock me-2"></i>Business Hours
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Mon - Fri:</strong> 8:00 AM - 10:00 PM</p>
+                    <p><strong>Saturday:</strong> 9:00 AM - 8:00 PM</p>
+                    <p><strong>Sunday:</strong> 10:00 AM - 6:00 PM</p>
+                    <p class="text-danger fw-semibold"><strong>Emergency:</strong> 24/7 Available</p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-warning text-white rounded-top">
+                    <h4 class="mb-0">
+                        <i class="fas fa-phone me-2"></i>Contact Information
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2"><i class="fas fa-phone me-2 text-success"></i><strong>Phone:</strong><br>+1 (555) 123-4567</p>
+                    <p class="mb-2"><i class="fas fa-envelope me-2 text-primary"></i><strong>Email:</strong><br>info@pharmarootz.com</p>
+                    <p class="mb-0"><i class="fas fa-globe me-2 text-info"></i><strong>Website:</strong><br>www.pharmarootz.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="mt-5">
+        <div class="card shadow-lg border-0 rounded-3">
+            <div class="card-header bg-secondary text-white rounded-top">
+                <h3 class="mb-0">
+                    <i class="fas fa-question-circle me-2"></i>Frequently Asked Questions
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="accordion accordion-flush" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq1">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                                How can I order medicines online?
+                            </button>
+                        </h2>
+                        <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                You can order medicines by registering as a customer, browsing our available medicines, and placing your order through our secure platform.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                                What payment methods do you accept?
+                            </button>
+                        </h2>
+                        <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                We accept cash on delivery, credit/debit cards, and digital wallets for your convenience.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq3">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                                Do you deliver to all areas?
+                            </button>
+                        </h2>
+                        <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                We provide delivery services to most areas within the city. Please contact us to confirm delivery availability in your area.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

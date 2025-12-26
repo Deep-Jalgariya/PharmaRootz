@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}Request Medicine - Customer Dashboard{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card text-white shadow-lg rounded-4" style="background: linear-gradient(135deg, #17a2b8, #4dd0e1);">
+                <div class="card-body text-center py-4">
+                    <h2 class="card-title"><i class="fas fa-clipboard-list me-2"></i>Request Medicine</h2>
+                    <p class="card-text fs-5">Request medicines that are not currently in stock</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Form & Info -->
+    <div class="row mb-4 g-4">
+        <!-- Form -->
+        <div class="col-md-6">
+            <div class="card shadow-sm rounded-4 border-0">
+                <div class="card-header bg-gradient-primary text-white rounded-top-4">
+                    <h4 class="mb-0"><i class="fas fa-edit me-2"></i>Request Form</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Medicine Name</label>
+                            {{ form.med_name|add_class:"form-control custom-pill" }}
+                            {% if form.med_name.errors %}
+                                <div class="text-danger mt-1">{{ form.med_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Quantity Needed</label>
+                            {{ form.med_quan|add_class:"form-control custom-pill" }}
+                            {% if form.med_quan.errors %}
+                                <div class="text-danger mt-1">{{ form.med_quan.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-gradient-primary btn-lg w-100 shadow-sm">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Request
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works -->
+        <div class="col-md-6">
+            <div class="card shadow-sm rounded-4 border-0">
+                <div class="card-header bg-gradient-info text-white rounded-top-4">
+                    <h4 class="mb-0"><i class="fas fa-info-circle me-2"></i>How It Works</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info text-dark rounded-4 shadow-sm border border-1 border-info">
+                        <h6><i class="fas fa-lightbulb me-2"></i>Request Process:</h6>
+                        <ol class="mb-0 ps-3">
+                            <li>Fill out the request form with medicine details</li>
+                            <li>Submit your request to the pharmacy</li>
+                            <li>Admin will review and process your request</li>
+                            <li>You'll be notified of the status</li>
+                        </ol>
+                    </div>
+
+                    <div class="alert alert-warning text-dark rounded-4 shadow-sm mt-3 border border-1 border-warning">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Important Notes:</h6>
+                        <ul class="mb-0 ps-3">
+                            <li>Provide accurate medicine name</li>
+                            <li>Specify realistic quantity needed</li>
+                            <li>Requests are processed within 24-48 hours</li>
+                            <li>You can track request status in your dashboard</li>
+                        </ul>
+                    </div>
+
+                    <div class="alert alert-success text-dark rounded-4 shadow-sm mt-3 border border-1 border-success">
+                        <h6><i class="fas fa-check-circle me-2"></i>Benefits:</h6>
+                        <ul class="mb-0 ps-3">
+                            <li>Get notified when medicine becomes available</li>
+                            <li>Help pharmacy stock popular medicines</li>
+                            <li>Priority service for regular customers</li>
+                            <li>Flexible delivery options</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Previous Requests -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-sm rounded-4 border-0">
+                <div class="card-header bg-gradient-secondary text-white rounded-top-4">
+                    <h4 class="mb-0"><i class="fas fa-history me-2"></i>Your Previous Requests</h4>
+                </div>
+                <div class="card-body">
+                    {% if user_requests %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Medicine Name</th>
+                                        <th>Quantity</th>
+                                        <th>Request Date</th>
+                                        <th>Status</th>
+                                        <th>Admin Response</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for request in user_requests %}
+                                    <tr>
+                                        <td><strong>{{ request.med_name }}</strong></td>
+                                        <td><span class="badge bg-info">{{ request.med_quan }}</span></td>
+                                        <td>{{ request.request_date|date:"M d, Y H:i" }}</td>
+                                        <td>
+                                            {% if request.status == 'Pending' %}
+                                                <span class="badge bg-warning">Pending</span>
+                                            {% elif request.status == 'Completed' %}
+                                                <span class="badge bg-success">Completed</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Rejected</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if request.status == 'Pending' %}
+                                                <span class="text-muted">Under Review</span>
+                                            {% elif request.status == 'Completed' %}
+                                                <span class="text-success">Medicine available for purchase</span>
+                                            {% else %}
+                                                <span class="text-danger">Request not fulfilled</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No previous requests</h4>
+                            <p class="text-muted">This is your first medicine request.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <a href="{% url 'customer_dashboard' %}" class="btn btn-secondary btn-lg shadow-sm">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Styles -->
+<style>
+.card {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    border: none;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #28a745, #5cd65c) !important;
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, #17a2b8, #4dd0e1) !important;
+}
+
+.bg-gradient-secondary {
+    background: linear-gradient(135deg, #6c757d, #adb5bd) !important;
+}
+
+.btn-gradient-primary {
+    background: linear-gradient(135deg, #28a745, #5cd65c);
+    border: none;
+}
+
+.custom-pill {
+    border-radius: 50px !important;
+    padding: 10px 15px !important;
+    border: 1px solid #ced4da !important;
+    transition: all 0.3s;
+}
+
+.custom-pill:focus {
+    border-color: #28a745 !important;
+    box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25) !important;
+    outline: none;
+}
+
+.alert {
+    border: none;
+    border-radius: 12px;
+}
+</style>
+{% endblock %}

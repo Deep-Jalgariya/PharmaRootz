@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}Stock Check - PharmaRootz{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-clipboard-list me-2"></i>Medicine Stock Check
+                </h3>
+                <a href="{% url 'add_medicine' %}" class="btn btn-light">
+                    <i class="fas fa-plus me-2"></i>Add New Medicine
+                </a>
+            </div>
+            <div class="card-body">
+                {% if medicines %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Medicine Name</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Manufacturing Date</th>
+                                    <th>Expiry Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for medicine in medicines %}
+                                <tr>
+                                    <td>
+                                        <i class="fas fa-pills me-2 text-primary"></i>
+                                        {{ medicine.m_name }}
+                                    </td>
+                                    <td>₹{{ medicine.m_price }}</td>
+                                    <td>
+                                        {% if medicine.m_quantity < 10 %}
+                                            <span class="badge bg-warning">{{ medicine.m_quantity }}</span>
+                                        {% else %}
+                                            <span class="badge bg-success">{{ medicine.m_quantity }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ medicine.m_mdate }}</td>
+                                    <td>
+                                        {% if medicine.is_expired %}
+                                            <span class="badge bg-danger">{{ medicine.m_edate }}</span>
+                                        {% else %}
+                                            <span class="badge bg-info">{{ medicine.m_edate }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if medicine.is_expired %}
+                                            <span class="badge bg-danger">Expired</span>
+                                        {% elif medicine.m_quantity < 10 %}
+                                            <span class="badge bg-warning">Low Stock</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Available</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'update_quantity' %}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'remove_medicine' %}" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-pills fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No medicines in stock</h5>
+                        <p class="text-muted">Start by adding some medicines to your inventory.</p>
+                        <a href="{% url 'add_medicine' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Add First Medicine
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-pills fa-2x mb-2"></i>
+                <h4>{{ medicines.count }}</h4>
+                <p class="mb-0">Total Medicines</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-check-circle fa-2x mb-2"></i>
+                <h4>{{ available }}</h4>
+                <p class="mb-0">Available</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                <h4>{{ low_stock_medicines.count }}</h4>
+                <p class="mb-0">Low Stock</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-calendar-times fa-2x mb-2"></i>
+                <h4>{{ expired_medicine.count }}</h4>
+                <p class="mb-0">Expired</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

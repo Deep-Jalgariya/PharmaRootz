@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - PharmaRootz{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #e0f7ff, #ffffff);
+        min-height: 100vh;
+    }
+
+    .stats-card {
+        border-radius: 16px;
+        padding: 25px;
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        color: #fff;
+    }
+
+    .stats-card i {
+        font-size: 2.5rem;
+        margin-bottom: 12px;
+    }
+
+    .stats-card h3 {
+        font-size: 1.8rem;
+        margin: 10px 0;
+        font-weight: 600;
+    }
+
+    .stats-card p {
+        font-size: 1.05rem;
+        font-weight: 500;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+    }
+
+    .btn-quick {
+        height: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        color: white;
+        transition: all 0.3s;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        font-weight: 500;
+    }
+
+    .btn-quick:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        text-decoration: none;
+        color: black !important;
+    }
+
+    .btn-quick:hover i {
+        color: black !important;
+    }
+
+    .btn-quick i {
+        font-size: 2rem;
+        margin-bottom: 8px;
+    }
+
+    .rounded-4 {
+        border-radius: 16px !important;
+    }
+
+    .card-header-gradient {
+        background: linear-gradient(135deg, #1d76b9, #50ade7);
+        color: white;
+        border-radius: 16px 16px 0 0 !important;
+    }
+
+    .badge-status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(0,0,0,0.05);
+    }
+</style>
+
+<!-- Welcome Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card text-center py-4 shadow-lg rounded-4" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: #fff;">
+            <h2><i class="fas fa-user-shield me-2"></i>Welcome, {{ admin.a_fname }} {{ admin.a_lname }}!</h2>
+            <p class="mb-0">Admin ID: <strong>{{ admin.admin_id }}</strong></p>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row mb-4 g-3">
+    <div class="col-md-3">
+        <div class="stats-card" style="background: linear-gradient(135deg, #17a2b8, #4dd0e1);">
+            <i class="fas fa-pills"></i>
+            <h3>{{ total_medicines }}</h3>
+            <p>Total Medicines</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card" style="background: linear-gradient(135deg, #ffc107, #ffca2c); color: #000;">
+            <i class="fas fa-exclamation-triangle text-dark"></i>
+            <h3>{{ low_stock_medicines.count }}</h3>
+            <p>Low Stock</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card" style="background: linear-gradient(135deg, #dc3545, #e4606d);">
+            <i class="fas fa-calendar-times"></i>
+            <h3>{{ expired_medicines.count }}</h3>
+            <p>Expired</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card" style="background: linear-gradient(135deg, #6610f2, #9b42f5);">
+            <i class="fas fa-clock"></i>
+            <h3>{{ pending_requests }}</h3>
+            <p>Pending Requests</p>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4 g-3">
+    <div class="col-md-2 col-6">
+        <a href="{% url 'stock_check' %}" class="btn btn-info btn-quick">
+            <i class="fas fa-clipboard-list"></i>
+            Check Stock
+        </a>
+    </div>
+    <div class="col-md-2 col-6">
+        <a href="{% url 'add_medicine' %}" class="btn btn-success btn-quick">
+            <i class="fas fa-plus-circle"></i>
+            Add Medicine
+        </a>
+    </div>
+    <div class="col-md-2 col-6">
+        <a href="{% url 'check_requests' %}" class="btn btn-warning btn-quick">
+            <i class="fas fa-list-alt"></i>
+            Check Requests
+        </a>
+    </div>
+    <div class="col-md-2 col-6">
+        <a href="{% url 'update_quantity' %}" class="btn btn-primary btn-quick">
+            <i class="fas fa-edit"></i>
+            Update Quantity
+        </a>
+    </div>
+    <div class="col-md-2 col-6">
+        <a href="{% url 'remove_medicine' %}" class="btn btn-danger btn-quick">
+            <i class="fas fa-trash-alt"></i>
+            Delete Medicine
+        </a>
+    </div>
+</div>
+
+<!-- Alerts Section -->
+<div class="row mb-4 g-3">
+    <!-- Low Stock -->
+    <div class="col-md-6">
+        <div class="card shadow-lg rounded-4 h-100">
+            <div class="card-header card-header-gradient">
+                <h4 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Low Stock Medicines</h4>
+            </div>
+            <div class="card-body">
+                {% if low_stock_medicines %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Quantity</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for medicine in low_stock_medicines %}
+                                <tr>
+                                    <td><i class="fas fa-pills me-2 text-warning"></i><strong>{{ medicine.m_name }}</strong></td>
+                                    <td><span class="badge bg-warning text-dark">{{ medicine.m_quantity }}</span></td>
+                                    <td>
+                                        <a href="{% url 'update_quantity' %}?medicine_id={{ medicine.medicine_id }}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit me-1"></i>Restock
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <p class="text-muted">All medicines have sufficient stock</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- Expired -->
+    <div class="col-md-6">
+        <div class="card shadow-lg rounded-4 h-100">
+            <div class="card-header card-header-gradient">
+                <h4 class="mb-0"><i class="fas fa-calendar-times me-2"></i>Expired Medicines</h4>
+            </div>
+            <div class="card-body">
+                {% if expired_medicines %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Expiry Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for medicine in expired_medicines %}
+                                <tr>
+                                    <td><i class="fas fa-pills me-2 text-danger"></i><strong>{{ medicine.m_name }}</strong></td>
+                                    <td><span class="badge bg-danger">{{ medicine.m_edate|date:"M d, Y" }}</span></td>
+                                    <td>
+                                        <a href="{% url 'remove_medicine' %}?medicine_id={{ medicine.medicine_id }}" 
+                                           class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash-alt me-1"></i>Remove
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <p class="text-muted">No expired medicines found</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Info -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-lg rounded-4">
+            <div class="card-header bg-secondary text-white">
+                <h4 class="mb-0"><i class="fas fa-user-shield me-2"></i>Your Information</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong><i class="fas fa-user me-2"></i>Name:</strong> {{ admin.a_fname }} {{ admin.a_lname }}</p>
+                        <p><strong><i class="fas fa-venus-mars me-2"></i>Gender:</strong> {{ admin.get_a_gender_display }}</p>
+                        <p><strong><i class="fas fa-birthday-cake me-2"></i>Birth Date:</strong> {{ admin.a_birthdate }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong><i class="fas fa-phone me-2"></i>Phone:</strong> {{ admin.a_phone_no }}</p>
+                        <p><strong><i class="fas fa-envelope me-2"></i>Email:</strong> {{ admin.a_email }}</p>
+                        <p><strong><i class="fas fa-map-marker-alt me-2"></i>Address:</strong> {{ admin.a_address }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

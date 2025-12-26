@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Customer Registration - PharmaRootz{% endblock %}
+
+{% block content %}
+<style>
+
+    .custom-pill {
+        border-radius: 50px !important;
+        padding: 12px 18px !important;
+        border: 2px solid #ced4da !important;
+        transition: all 0.3s ease !important;
+    } 
+    .custom-pill:focus {
+        border-color: #28a745 !important;
+        box-shadow:0 0 0 0.25rem rgba(40, 167, 69, 0.25) !important;
+        outline: none !important;
+    }
+    select.form-select:focus {
+        border-color: #28a745 !important;
+        box-shadow:     
+    }
+
+    /* Make card header more attractive */
+    .custom-header {
+        background: linear-gradient(90deg, #16a085, #1abc9c);
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header custom-header text-white text-center py-3">
+                <h3 class="mb-0">
+                    <i class="fas fa-user-plus me-2"></i>Customer Registration
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Name Row -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.c_fname.id_for_label }}" class="form-label">
+                                <i class="fas fa-user me-2"></i>First Name *
+                            </label>
+                            {{ form.c_fname|add_class:"form-control custom-pill" }}
+                            {% if form.c_fname.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.c_fname.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.c_lname.id_for_label }}" class="form-label">
+                                <i class="fas fa-user me-2"></i>Last Name *
+                            </label>
+                            {{ form.c_lname|add_class:"form-control custom-pill" }}
+                            {% if form.c_lname.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.c_lname.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Gender & Birth Date -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.c_gender.id_for_label }}" class="form-label">
+                                <i class="fas fa-venus-mars me-2"></i>Gender *
+                            </label>
+                            {{ form.c_gender|add_class:"form-select custom-pill" }}
+                            {% if form.c_gender.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.c_gender.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.c_birthdate.id_for_label }}" class="form-label">
+                                <i class="fas fa-calendar me-2"></i>Birth Date *
+                            </label>
+                            {{ form.c_birthdate|add_class:"form-control custom-pill" }}
+                            {% if form.c_birthdate.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.c_birthdate.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Phone & Email -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.c_phone_no.id_for_label }}" class="form-label">
+                                <i class="fas fa-phone me-2"></i>Phone Number *
+                            </label>
+                            {{ form.c_phone_no|add_class:"form-control custom-pill" }}
+                            {% if form.c_phone_no.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.c_phone_no.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.c_email.id_for_label }}" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email *
+                            </label>
+                            {{ form.c_email|add_class:"form-control custom-pill" }}
+                            {% if form.c_email.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.c_email.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="mb-3">
+                        <label for="{{ form.c_address.id_for_label }}" class="form-label">
+                            <i class="fas fa-map-marker-alt me-2"></i>Address *
+                        </label>
+                        {{ form.c_address|add_class:"form-control custom-pill" }}
+                        {% if form.c_address.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.c_address.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Password -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.password.id_for_label }}" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Password *
+                            </label>
+                            {{ form.password|add_class:"form-control custom-pill" }}
+                            {% if form.password.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.password.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Password must be at least 8 characters long
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.confirm_password.id_for_label }}" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Confirm Password *
+                            </label>
+                            {{ form.confirm_password|add_class:"form-control custom-pill" }}
+                            {% if form.confirm_password.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.confirm_password.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'user_type_selection' %}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-2"></i>Back
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-2"></i>Register
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Login Link -->
+                <div class="text-center mt-4">
+                    <p class="text-muted">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Already have an account?
+                        <a href="{% url 'customer_login' %}" class="text-decoration-none">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

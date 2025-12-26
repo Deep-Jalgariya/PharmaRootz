@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% block title %}Buy Medicine - Customer Dashboard{% endblock %}
+{% load widget_tweaks %}
+
+{% block content %}
+<style>
+    /* Custom input styling */
+    .custom-pill {
+        border-radius: 50px !important;
+        padding: 12px 18px !important;
+        border: 2px solid #ced4da !important;
+        transition: all 0.3s ease !important;
+    }
+    .custom-pill:focus {
+        border-color: #28a745 !important;
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25) !important;
+        outline: none !important;
+    }
+
+    /* Medicine cards hover effect */
+    .medicine-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        border: 1px solid #e0e0e0;
+    }
+    .medicine-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    /* Gradient headers */
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #1d76b9, #50ade7) !important;
+    }
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #17a2b8, #4dd0e1) !important;
+    }
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #28a745, #5cd65c) !important;
+    }
+
+    /* Card header text */
+    .card-header h4 {
+        font-weight: 600;
+    }
+</style>
+
+<div class="container mt-5">
+
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card text-white shadow-lg rounded-4" style="background: linear-gradient(135deg, #1d76b9, #50ade7);">
+                <div class="card-body text-center py-4">
+                    <h2 class="card-title"><i class="fas fa-shopping-cart me-2"></i>Buy Medicine</h2>
+                    <p class="card-text fs-5">Purchase medicines from our inventory easily</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Form & Info (ALWAYS VISIBLE) -->
+    <div class="row mb-4 g-4">
+        <!-- Purchase Form -->
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-gradient-primary text-white rounded-top-4">
+                    <h4 class="mb-0"><i class="fas fa-credit-card me-2"></i>Purchase Form</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Medicine</label>
+                            {{ form.medicine|add_class:"form-select custom-pill" }}
+                            {% if form.medicine.errors %}
+                                <div class="text-danger mt-1">{{ form.medicine.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Quantity</label>
+                            {{ form.quantity|add_class:"form-control custom-pill" }}
+                            {% if form.quantity.errors %}
+                                <div class="text-danger mt-1">{{ form.quantity.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm">
+                            <i class="fas fa-shopping-cart me-2"></i>Purchase Medicine
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purchase Info (THIS WILL NEVER DISAPPEAR) -->
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-gradient-info text-white rounded-top-4">
+                    <h4 class="mb-0"><i class="fas fa-info-circle me-2"></i>Purchase Information</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info text-dark rounded-4 shadow-sm">
+                        <h6><i class="fas fa-lightbulb me-2"></i>How to Purchase:</h6>
+                        <ol class="mb-0 ps-3">
+                            <li>Select the medicine you want to buy</li>
+                            <li>Enter the quantity needed</li>
+                            <li>Click "Purchase Medicine" to complete</li>
+                            <li>Payment is calculated automatically</li>
+                        </ol>
+                    </div>
+                    <div class="alert alert-warning text-dark rounded-4 shadow-sm mt-3">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Important Notes:</h6>
+                        <ul class="mb-0 ps-3">
+                            <li>Only available medicines are displayed</li>
+                            <li>Quantity cannot exceed available stock</li>
+                            <li>Prices are per unit</li>
+                            <li>Total is calculated automatically</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Available Medicines Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-gradient-success text-white rounded-top-4">
+                    <h4 class="mb-0"><i class="fas fa-pills me-2"></i>Available Medicines</h4>
+                </div>
+                <div class="card-body">
+                    {% if medicines %}
+                        <div class="row g-4">
+                            {% for medicine in medicines %}
+                            <div class="col-md-4">
+                                <div class="card h-100 medicine-card shadow-sm rounded-4">
+                                    <div class="card-body text-center py-4">
+                                        <i class="fas fa-pills fa-3x text-primary mb-3"></i>
+                                        <h5 class="card-title fw-bold">{{ medicine.m_name }}</h5>
+                                        <p class="card-text text-muted">{{ medicine.m_descr|truncatechars:100 }}</p>
+                                        <div class="row text-center mb-3">
+                                            <div class="col-6">
+                                                <strong class="text-success">₹{{ medicine.m_price }}</strong><br>
+                                                <small class="text-muted">per unit</small>
+                                            </div>
+                                            <div class="col-6">
+                                                <strong class="text-info">{{ medicine.m_quantity }}</strong><br>
+                                                <small class="text-muted">in stock</small>
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            Expires: {{ medicine.m_edate|date:"M d, Y" }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-pills fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No medicines available</h4>
+                            <p class="text-muted">Currently there are no medicines in stock.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <a href="{% url 'customer_dashboard' %}" class="btn btn-secondary btn-lg shadow-sm">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

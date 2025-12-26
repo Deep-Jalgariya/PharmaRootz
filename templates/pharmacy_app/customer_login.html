@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Customer Login - PharmaRootz{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+
+<style>
+     .custom-pill {
+        border-radius: 50px !important;
+        padding: 12px 18px !important;
+        border: 2px solid #ced4da !important;
+        transition: all 0.3s ease !important;
+    } 
+    .custom-pill:focus {
+        border-color: #28a745 !important;
+        box-shadow:0 0 0 0.25rem rgba(40, 167, 69, 0.25) !important;
+        outline: none !important;
+    }
+    /* Input focus effect: green border + glow */
+    .form-control:focus {
+        border-color: #28a745 !important;
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25) !important;
+    }
+
+    /* Card header gradient */
+    .custom-header {
+        background: linear-gradient(90deg, #16a085, #1abc9c);
+    }
+</style>
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+            
+            <!-- Header -->
+            <div class="card-header custom-header text-white text-center py-3">
+                <h3 class="mb-0 fw-bold">
+                    <i class="fas fa-sign-in-alt me-2"></i>Customer Login
+                </h3>
+                <p class="mb-0 small opacity-75">Access your account securely</p>
+            </div>
+
+            <!-- Body -->
+            <div class="card-body p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Customer ID -->
+                    <div class="mb-3">
+                        <label for="{{ form.cust_id.id_for_label }}" class="form-label fw-semibold">
+                            <i class="fas fa-user me-2 text-success"></i>Customer ID *
+                        </label>
+                        {{ form.cust_id|add_class:"form-control form-control-lg custom-pill" }}
+                        {% if form.cust_id.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.cust_id.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Password -->
+                    <div class="mb-4">
+                        <label for="{{ form.password.id_for_label }}" class="form-label fw-semibold">
+                            <i class="fas fa-lock me-2 text-success"></i>Password *
+                        </label>
+                        {{ form.password|add_class:"form-control form-control-lg custom-pill" }}
+                        {% if form.password.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.password.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg shadow-sm">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Links -->
+                <div class="text-center mt-4">
+                    <p class="text-muted mb-1">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Don't have an account? 
+                        <a href="{% url 'customer_register' %}" class="fw-semibold text-success">Register here</a>
+                    </p>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-user-shield me-2 "></i>
+                        Are you an admin? 
+                        <a href="{% url 'admin_login' %}" class="fw-semibold text-primary">Login as Admin</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

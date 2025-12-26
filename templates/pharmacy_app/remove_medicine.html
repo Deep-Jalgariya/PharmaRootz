@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block title %}Remove Medicine - PharmaRootz{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Header Card -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow text-white" style="background: linear-gradient(135deg, #dc3545, #e4606d);">
+                <div class="card-body text-center py-4">
+                    <h2 class="card-title fw-bold">
+                        <i class="fas fa-trash-alt me-2"></i>Remove Medicine
+                    </h2>
+                    <p class="card-text fs-6">Select medicines to remove from inventory</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4 g-3">
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center p-3">
+                <i class="fas fa-pills fa-2x text-primary mb-2"></i>
+                <h3>{{ medicines.count }}</h3>
+                <p class="mb-0">Total Medicines</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center p-3">
+                <i class="fas fa-exclamation-triangle fa-2x text-warning mb-2"></i>
+                <h3>{{ medicines|length|add:"-1" }}</h3>
+                <p class="mb-0">Can Remove</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center p-3">
+                <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+                <h3>1</h3>
+                <p class="mb-0">Protected</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center p-3">
+                <i class="fas fa-undo fa-2x text-info mb-2"></i>
+                <h3>0</h3>
+                <p class="mb-0">Recently Removed</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="row mb-4 g-3">
+        <div class="col-md-6">
+            <div class="input-group shadow-sm">
+                <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+                <input type="text" id="searchInput" class="form-control" placeholder="Search medicines...">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <select id="filterSelect" class="form-select shadow-sm">
+                <option value="">All Medicines</option>
+                <option value="low_stock">Low Stock</option>
+                <option value="expired">Expired</option>
+                <option value="available">Available</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Medicines Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Warning: This action cannot be undone!
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if medicines %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle" id="medicinesTable">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Medicine Name</th>
+                                        <th>Description</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Manufacturing Date</th>
+                                        <th>Expiry Date</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for medicine in medicines %}
+                                    <tr data-name="{{ medicine.m_name|lower }}" data-stock="{{ medicine.m_quantity }}" data-expiry="{{ medicine.m_edate|date:'Y-m-d' }}"
+                                        class="{% if medicine.is_expired %}table-danger{% elif medicine.m_quantity < 10 %}table-warning{% endif %}">
+                                        <td>
+                                            <i class="fas fa-pills me-2 text-primary"></i>
+                                            <strong>{{ medicine.m_name }}</strong>
+                                        </td>
+                                        <td>{{ medicine.m_descr|truncatewords:5 }}</td>
+                                        <td>₹{{ medicine.m_price }}</td>
+                                        <td>
+                                            {% if medicine.m_quantity < 10 %}
+                                                <span class="badge bg-warning">{{ medicine.m_quantity }}</span>
+                                            {% else %}
+                                                <span class="badge bg-success">{{ medicine.m_quantity }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ medicine.m_mdate|date:"M d, Y" }}</td>
+                                        <td>
+                                            {% if medicine.is_expired %}
+                                                <span class="badge bg-danger">{{ medicine.m_edate|date:"M d, Y" }}</span>
+                                            {% else %}
+                                                <span class="badge bg-success">{{ medicine.m_edate|date:"M d, Y" }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if medicine.is_expired %}
+                                                <span class="badge bg-danger">Expired</span>
+                                            {% elif medicine.m_quantity < 10 %}
+                                                <span class="badge bg-warning">Low Stock</span>
+                                            {% else %}
+                                                <span class="badge bg-success">Available</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger btn-sm" 
+                                                    onclick="confirmDelete('{{ medicine.id }}', '{{ medicine.m_name }}')"
+                                                    {% if medicine.m_quantity > 0 %}disabled{% endif %}>
+                                                <i class="fas fa-trash-alt me-1"></i>Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-pills fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No medicines found in inventory.</p>
+                            <a href="{% url 'add_medicine' %}" class="btn btn-success shadow-sm">
+                                <i class="fas fa-plus-circle me-2"></i>Add Medicine
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content shadow-sm">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Confirm Deletion
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="medicineName"></strong>?</p>
+                <p class="text-danger"><i class="fas fa-exclamation-triangle me-2"></i>This action cannot be undone!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="medicine_id" id="medicineId">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt me-2"></i>Delete Permanently
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete(medicineId, medicineName) {
+    document.getElementById('medicineId').value = medicineId;
+    document.getElementById('medicineName').textContent = medicineName;
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+
+// Search functionality
+document.getElementById('searchInput').addEventListener('keyup', function() {
+    const searchTerm = this.value.toLowerCase();
+    document.querySelectorAll('#medicinesTable tbody tr').forEach(row => {
+        row.style.display = row.dataset.name.includes(searchTerm) ? '' : 'none';
+    });
+});
+
+// Filter functionality
+document.getElementById('filterSelect').addEventListener('change', function() {
+    const filterValue = this.value;
+    const today = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('#medicinesTable tbody tr').forEach(row => {
+        const stock = parseInt(row.dataset.stock);
+        const expiry = row.dataset.expiry;
+        let show = true;
+        if (filterValue === 'low_stock') show = stock < 10;
+        else if (filterValue === 'expired') show = expiry < today;
+        else if (filterValue === 'available') show = stock > 0 && expiry >= today;
+        row.style.display = show ? '' : 'none';
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Quantity - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Header Card -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card text-white shadow-sm" style="background: linear-gradient(135deg, #1e3c72, #2a5298);">
+                <div class="card-body text-center py-4">
+                    <h2 class="card-title fw-bold">
+                        <i class="fas fa-edit me-2"></i>Update Medicine Quantities
+                    </h2>
+                    <p class="card-text fs-6">Modify stock levels for medicines</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="row mb-4 g-3">
+        <div class="col-md-8">
+            <div class="input-group shadow-sm">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search medicines...">
+                <button class="btn btn-primary" type="button" id="searchButton">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <select id="filterSelect" class="form-select shadow-sm">
+                <option value="">All Medicines</option>
+                <option value="low">Low Stock (&lt; 10)</option>
+                <option value="out">Out of Stock</option>
+                <option value="expired">Expired</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Medicines Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header" style="background: linear-gradient(135deg, #4e73df, #224abe); color: #fff;">
+                    <h5 class="mb-0">
+                        <i class="fas fa-table me-2"></i>Medicine Inventory
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if medicines %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="medicinesTable">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Medicine Name</th>
+                                        <th>Current Quantity</th>
+                                        <th>Price</th>
+                                        <th>Manufacturing Date</th>
+                                        <th>Expiry Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for medicine in medicines %}
+                                    <tr data-name="{{ medicine.m_name|lower }}" 
+                                        data-quantity="{{ medicine.m_quantity }}" 
+                                        data-expired="{% if medicine.is_expired %}yes{% else %}no{% endif %}"
+                                        data-status="{% if medicine.is_expired %}expired{% elif medicine.m_quantity == 0 %}out{% elif medicine.m_quantity < 10 %}low{% else %}in-stock{% endif %}">
+                                        <td>
+                                            <strong>{{ medicine.m_name }}</strong><br>
+                                            <small class="text-muted">{{ medicine.m_descr|truncatechars:50 }}</small>
+                                        </td>
+                                        <td>
+                                            {% if medicine.m_quantity == 0 %}
+                                                <span class="badge bg-danger">Out of Stock</span>
+                                            {% elif medicine.m_quantity < 10 %}
+                                                <span class="badge bg-warning">{{ medicine.m_quantity }}</span>
+                                            {% else %}
+                                                <span class="badge bg-success">{{ medicine.m_quantity }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>₹{{ medicine.m_price }}</td>
+                                        <td>{{ medicine.m_mdate|date:"M d, Y" }}</td>
+                                        <td>
+                                            {% if medicine.is_expired %}
+                                                <span class="badge bg-danger">{{ medicine.m_edate|date:"M d, Y" }}</span>
+                                            {% else %}
+                                                <span class="badge bg-success">{{ medicine.m_edate|date:"M d, Y" }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if medicine.is_expired %}
+                                                <span class="badge bg-danger">Expired</span>
+                                            {% elif medicine.m_quantity == 0 %}
+                                                <span class="badge bg-danger">Out of Stock</span>
+                                            {% elif medicine.m_quantity < 10 %}
+                                                <span class="badge bg-warning">Low Stock</span>
+                                            {% else %}
+                                                <span class="badge bg-success">In Stock</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if medicine.is_expired %}
+                                                <button class="btn btn-secondary btn-sm" disabled>
+                                                    <i class="fas fa-ban"></i> Expired
+                                                </button>
+                                            {% else %}
+                                                <button class="btn btn-primary btn-sm update-btn" 
+                                                        data-medicine-id="{{ medicine.id }}" 
+                                                        data-medicine-name="{{ medicine.m_name }}" 
+                                                        data-current-quantity="{{ medicine.m_quantity }}">
+                                                    <i class="fas fa-edit"></i> Update
+                                                </button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-pills fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No medicines found</h4>
+                            <p class="text-muted">The inventory is currently empty.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary btn-lg shadow-sm">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Update Quantity Modal -->
+<div class="modal fade" id="updateModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-sm">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit me-2"></i>Update Quantity
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'update_quantity' %}" id="updateForm">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" id="medicineId" name="medicine_id">
+                    <div class="mb-3">
+                        <label for="medicineName" class="form-label">Medicine Name</label>
+                        <input type="text" id="medicineName" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="currentQuantity" class="form-label">Current Quantity</label>
+                        <input type="number" id="currentQuantity" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newQuantity" class="form-label">New Quantity</label>
+                        <input type="number" id="newQuantity" name="new_quantity" class="form-control" min="0" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Quantity</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const updateModal = new bootstrap.Modal(document.getElementById('updateModal'), { backdrop: false });
+    
+    // Update button click
+    document.querySelectorAll('.update-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            document.getElementById('medicineId').value = this.dataset.medicineId;
+            document.getElementById('medicineName').value = this.dataset.medicineName;
+            document.getElementById('currentQuantity').value = this.dataset.currentQuantity;
+            document.getElementById('newQuantity').value = this.dataset.currentQuantity;
+            document.getElementById('newQuantity').focus();
+            updateModal.show();
+        });
+    });
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const performSearch = () => {
+        const term = searchInput.value.toLowerCase();
+        document.querySelectorAll('#medicinesTable tbody tr').forEach(row => {
+            row.style.display = row.dataset.name.includes(term) ? '' : 'none';
+        });
+    };
+    searchInput.addEventListener('keyup', performSearch);
+    searchButton.addEventListener('click', performSearch);
+
+    // Filter functionality
+    document.getElementById('filterSelect').addEventListener('change', function() {
+        const filter = this.value;
+        document.querySelectorAll('#medicinesTable tbody tr').forEach(row => {
+            let show = true;
+            if (filter === 'low' && row.dataset.status !== 'low') show = false;
+            if (filter === 'out' && row.dataset.status !== 'out') show = false;
+            if (filter === 'expired' && row.dataset.status !== 'expired') show = false;
+            row.style.display = show ? '' : 'none';
+        });
+    });
+});
+</script>
+{% endblock %}

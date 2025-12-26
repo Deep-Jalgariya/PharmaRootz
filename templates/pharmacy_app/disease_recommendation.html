@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Disease Recommendation - PharmaRootz{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row g-4">
+        <div class="col-md-5">
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-header text-white rounded-top-4" style="background: linear-gradient(135deg,#f39c12,#f1c40f);">
+                    <h4 class="mb-0"><i class="fas fa-stethoscope me-2"></i>Find Medicines by Disease</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Disease / Symptoms</label>
+                            {{ form.disease_text|add_class:"form-control rounded-3" }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Number of suggestions</label>
+                            {{ form.top_k|add_class:"form-control rounded-pill" }}
+                        </div>
+                        <button class="btn btn-warning text-white rounded-pill px-4" type="submit">
+                            <i class="fas fa-magic me-2"></i>Recommend
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            {% if results %}
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-header text-white rounded-top-4" style="background: linear-gradient(135deg,#1d76b9,#50ade7);">
+                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Top Recommendations</h5>
+                </div>
+                <div class="card-body">
+                    {% if query %}
+                    <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                        <div class="fw-semibold">Query</div>
+                        <div class="small text-muted">{{ query }}</div>
+                    </div>
+                    {% endif %}
+                    <div class="list-group">
+                        {% for r in results %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center rounded-3 mb-2">
+                            <div>
+                                <div class="fw-bold">{{ r.name }}{% if r.is_generic %} <span class="badge bg-success ms-2">Generic</span>{% endif %}</div>
+                                <div class="small text-muted">{{ r.indications }}</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-semibold">₹{{ r.price }}</div>
+                                <div class="small text-muted">Score: {{ r.similarity|floatformat:2 }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

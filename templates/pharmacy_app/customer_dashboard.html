@@ -1,0 +1,327 @@
+{% extends 'base.html' %}
+
+{% block title %}Customer Dashboard - PharmaRootz{% endblock %}
+
+{% block content %}
+<style>
+        .btn, .btn-quick, .btn-rounded {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .btn:hover, .btn-quick:hover, .btn-rounded:hover {
+        transform: translateY(-4px) scale(1.03);
+        box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+    }
+
+    .btn:active, .btn-quick:active, .btn-rounded:active {
+        transform: scale(0.96);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    body {
+        background: linear-gradient(135deg, #e0f7ff, #ffffff);
+        min-height: 100vh;
+    }
+
+    .stats-card {
+        border-radius: 16px;
+        padding: 25px;
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        color: #fff;
+    }
+
+    .stats-card i {
+        font-size: 2.5rem;
+        margin-bottom: 12px;
+    }
+
+    .stats-card h3 {
+        font-size: 1.8rem;
+        margin: 10px 0;
+        font-weight: 600;
+    }
+
+    .stats-card p {
+        font-size: 1.05rem;
+        font-weight: 500;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+    }
+</style>
+
+<!-- Welcome Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card text-center py-4 shadow-lg rounded-4" style="background: linear-gradient(135deg, #1d76b9, #50ade7); color: #fff;">
+            <h2><i class="fas fa-user me-2"></i>Welcome, {{ customer.c_fname }} {{ customer.c_lname }}!</h2>
+            <p>Your Customer ID: <strong>{{ customer.cust_id }}</strong></p>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats with inline colors -->
+<div class="row mb-4 g-3">
+    <div class="col-md-4">
+        <div class="stats-card" style="background: linear-gradient(135deg, #ffc107, #ffca2c); color: #000;">
+            <i class="fas fa-shopping-cart text-dark"></i>
+            <h3>{{ purchases.count }}</h3>
+            <p>Total Purchases</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card" style="background: linear-gradient(135deg, #28a745, #5cd65c); color: #fff;">
+            <i class="fa-solid fa-indian-rupee-sign text-white"></i>
+            <h3>₹{{ total_spent|floatformat:2 }}</h3>
+            <p>Total Spent</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card" style="background: linear-gradient(135deg, #17a2b8, #4dd0e1); color: #fff;">
+            <i class="fas fa-pills text-white"></i>
+            <h3>{{ recent_medicines.count }}</h3>
+            <p>Available Medicines</p>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4 g-3">
+    <div class="col-md-3 col-sm-6">
+        <a href="{% url 'buy_medicine' %}" class="btn btn-primary btn-quick w-100">
+            <i class="fas fa-shopping-cart fa-2x mb-2"></i>Buy Medicine
+        </a>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <a href="{% url 'show_medicines' %}" class="btn btn-info btn-quick w-100">
+            <i class="fas fa-pills fa-2x mb-2"></i>View Medicines
+        </a>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <a href="{% url 'request_medicine' %}" class="btn btn-warning btn-quick w-100">
+            <i class="fas fa-plus-circle fa-2x mb-2"></i>Request Medicine
+        </a>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <a href="{% url 'substitution' %}" class="btn btn-success btn-quick w-100">
+            <i class="fas fa-exchange-alt fa-2x mb-2"></i>Substitution
+        </a>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <a href="{% url 'disease_recommendation' %}" class="btn btn-success btn-quick w-100">
+            <i class="fas fa-stethoscope fa-2x mb-2"></i>Disease Rx
+        </a>
+    </div>
+</div>
+
+<!-- Recent Requests Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-lg rounded-4">
+            <div class="card-header" style="background: linear-gradient(135deg, #1d76b9, #50ade7); color: #fff;">
+                <h4 class="mb-0"><i class="fas fa-list-alt me-2"></i>Your 5 Most Recent Requests</h4>
+            </div>
+            <div class="card-body">
+                {% if recent_requests %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Medicine</th>
+                                <th>Quantity</th>
+                                <th>Status</th>
+                                <th>Request Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in recent_requests %}
+                            <tr>
+                                <td><i class="fas fa-pills me-2 text-warning"></i><strong>{{ request.med_name }}</strong></td>
+                                <td>{{ request.med_quan }}</td>
+                                <td>
+                                    {% if request.status == 'Pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% elif request.status == 'Completed' %}
+                                        <span class="badge bg-success">Completed</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Rejected</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ request.request_date|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if request.status == 'Pending' %}
+                                        <span class="text-muted">Waiting for admin approval</span>
+                                    {% elif request.status == 'Completed' %}
+                                        <a href="{% url 'buy_medicine' %}" class="btn btn-success btn-sm">
+                                            <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">Request was rejected</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'request_medicine' %}" class="btn btn-warning btn-rounded me-2">
+                        <i class="fas fa-plus-circle me-2"></i>Make New Request
+                    </a>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-list-alt fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No medicine requests yet. Request medicines you need!</p>
+                    <a href="{% url 'request_medicine' %}" class="btn btn-warning btn-rounded">
+                        <i class="fas fa-plus-circle me-2"></i>Make Your First Request
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Purchases Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-lg rounded-4">
+            <div class="card-header" style="background: linear-gradient(135deg, #1d76b9, #50ade7); color: #fff;">
+                <h4 class="mb-0"><i class="fas fa-history me-2"></i>Recent Purchases</h4>
+            </div>
+            <div class="card-body">
+                {% if purchases %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Medicine</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for purchase in purchases %}
+                            <tr>
+                                <td><i class="fas fa-pills me-2 text-primary"></i>{{ purchase.medicine.m_name }}</td>
+                                <td>{{ purchase.quantity }}</td>
+                                <td>₹ {{ purchase.medicine.m_price }}</td>
+                                <td>₹ {{ purchase.total_price }}</td>
+                                <td>{{ purchase.purchase_date|date:"M d, Y" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'generate_bill' %}" class="btn btn-success btn-rounded">
+                        <i class="fas fa-file-invoice me-2"></i>Generate Bill
+                    </a>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No purchases yet. Start shopping for medicines!</p>
+                    <a href="{% url 'buy_medicine' %}" class="btn btn-primary btn-rounded">
+                        <i class="fas fa-shopping-cart me-2"></i>Buy Your First Medicine
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Info Section -->
+
+<!-- Recent AI Recommendations -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-lg rounded-4">
+            <div class="card-header" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: #fff;">
+                <h4 class="mb-0"><i class="fas fa-exchange-alt me-2"></i>Recent Substitutions</h4>
+            </div>
+            <div class="card-body">
+                {% if recent_ai_subs %}
+                <ul class="list-group list-group-flush">
+                    {% for rec in recent_ai_subs %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-semibold">{{ rec.source_medicine.m_name }} → {{ rec.recommended_medicine.m_name }}</div>
+                            <div class="small text-muted">Similarity: {{ rec.similarity|floatformat:2 }}</div>
+                        </div>
+                        <div class="text-end">
+                            {% if rec.price_difference is not None %}
+                                <span class="badge bg-primary">Save ₹{{ rec.price_difference|floatformat:2 }}</span>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                    <div class="text-muted">No substitution recommendations yet.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-lg rounded-4">
+            <div class="card-header" style="background: linear-gradient(135deg, #f39c12, #f1c40f); color: #fff;">
+                <h4 class="mb-0"><i class="fas fa-stethoscope me-2"></i>Recent Disease Recommendations</h4>
+            </div>
+            <div class="card-body">
+                {% if recent_ai_disease %}
+                <ul class="list-group list-group-flush">
+                    {% for rec in recent_ai_disease %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-semibold">{{ rec.recommended_medicine.m_name }}</div>
+                            <div class="small text-muted">Relevance: {{ rec.similarity|floatformat:2 }}</div>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-secondary">Query</span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                    <div class="text-muted">No disease recommendations yet.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-lg rounded-4">
+            <div class="card-header bg-secondary text-white">
+                <h4 class="mb-0"><i class="fas fa-user me-2"></i>Your Information</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Name:</strong> {{ customer.c_fname }} {{ customer.c_lname }}</p>
+                        <p><strong>Gender:</strong> {{ customer.get_c_gender_display }}</p>
+                        <p><strong>Birth Date:</strong> {{ customer.c_birthdate }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Phone:</strong> {{ customer.c_phone_no }}</p>
+                        <p><strong>Email:</strong> {{ customer.c_email }}</p>
+                        <p><strong>Address:</strong> {{ customer.c_address }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

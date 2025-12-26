@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Select User Type - PharmaRootz{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+            <div class="card-header text-white text-center py-4" 
+                 style="background: linear-gradient(135deg, #28a745, #17a2b8);">
+                <h3 class="mb-0">
+                    <i class="fas fa-users me-2"></i>Welcome to PharmaRootz
+                </h3>
+            </div>
+            <div class="card-body text-center p-5">
+                <h4 class="mb-5 fw-semibold">Select your user type to continue</h4>
+                
+                <div class="row g-4">
+                    <!-- Customer Card -->
+                    <div class="col-md-6">
+                        <a href="{% url 'customer_register' %}" class="text-decoration-none">
+                            <div class="card border-0 shadow-sm h-100 rounded-4 option-card p-4">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-user fa-3x text-success mb-3"></i>
+                                    <h5 class="card-title fw-bold text-dark">Customer</h5>
+                                    <p class="card-text text-muted">Buy medicines and use pharmacy services</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Admin Card -->
+                    <div class="col-md-6">
+                        <a href="{% url 'admin_register' %}" class="text-decoration-none">
+                            <div class="card border-0 shadow-sm h-100 rounded-4 option-card p-4">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-user-shield fa-3x text-primary mb-3"></i>
+                                    <h5 class="card-title fw-bold text-dark">Admin</h5>
+                                    <p class="card-text text-muted">Manage pharmacy inventory and operations</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <p class="text-muted">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Already have an account? 
+                        <a href="{% url 'customer_login' %}" class="fw-semibold text-success text-decoration-none">Login as Customer</a> 
+                        or 
+                        <a href="{% url 'admin_login' %}" class="fw-semibold text-primary text-decoration-none">Login as Admin</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.option-card {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+.option-card:hover {
+    transform: translateY(-5px);
+    border-color: #17a2b8;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

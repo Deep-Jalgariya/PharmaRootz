@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Medicine - PharmaRootz{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-lg rounded-4 border-0">
+            <div class="card-header bg-success text-white rounded-4">
+                <h3 class="mb-0">
+                    <i class="fas fa-plus-circle me-2"></i>Add New Medicine
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Medicine Name -->
+                    <div class="mb-3">
+                        <label for="{{ form.m_name.id_for_label }}" class="form-label">
+                            <i class="fas fa-pills me-2"></i>Medicine Name *
+                        </label>
+                        {{ form.m_name|add_class:"form-control" }}
+                        {% if form.m_name.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.m_name.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Price & Quantity -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.m_price.id_for_label }}" class="form-label">
+                                <i class="fas fa-dollar-sign me-2"></i>Price *
+                            </label>
+                            {{ form.m_price|add_class:"form-control" }}
+                            {% if form.m_price.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.m_price.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.m_quantity.id_for_label }}" class="form-label">
+                                <i class="fas fa-sort-numeric-up me-2"></i>Quantity *
+                            </label>
+                            {{ form.m_quantity|add_class:"form-control" }}
+                            {% if form.m_quantity.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.m_quantity.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Manufacturing & Expiry Date -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.m_mdate.id_for_label }}" class="form-label">
+                                <i class="fas fa-calendar me-2"></i>Manufacturing Date *
+                            </label>
+                            {{ form.m_mdate|add_class:"form-control" }}
+                            {% if form.m_mdate.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.m_mdate.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.m_edate.id_for_label }}" class="form-label">
+                                <i class="fas fa-calendar me-2"></i>Expiry Date *
+                            </label>
+                            {{ form.m_edate|add_class:"form-control" }}
+                            {% if form.m_edate.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.m_edate.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <label for="{{ form.m_descr.id_for_label }}" class="form-label">
+                            <i class="fas fa-info-circle me-2"></i>Description *
+                        </label>
+                        {{ form.m_descr|add_class:"form-control" }}
+                        {% if form.m_descr.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.m_descr.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{% url 'stock_check' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Stock
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-plus-circle me-2"></i>Add Medicine
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

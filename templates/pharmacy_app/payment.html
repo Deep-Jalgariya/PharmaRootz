@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}Payment - PharmaRootz{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header text-white rounded-top-4">
+                    <h3 class="mb-0"><i class="fas fa-credit-card me-2"></i>Payment</h3>
+                </div>
+                <div class="card-body">
+                    <h5 class="mb-3">Order Summary</h5>
+                    <ul class="list-group mb-4">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Medicine:</span>
+                            <span><strong>{{ medicine.m_name }}</strong></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Quantity:</span>
+                            <span><strong>{{ quantity }}</strong></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Price per unit:</span>
+                            <span>₹{{ medicine.m_price }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Total:</span>
+                            <span><strong>₹{{ total_price }}</strong></span>
+                        </li>
+                    </ul>
+                    <form method="post" id="paymentForm" autocomplete="off" novalidate>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Payment Method</label>
+                            <select name="payment_method" id="payment_method" class="form-select custom-pill" required>
+                                <option value="Card">Card</option>
+                                <option value="UPI">UPI</option>
+                            </select>
+                        </div>
+                        <!-- Card Payment Fields -->
+                        <div id="cardFields" style="display:none;">
+                            <div class="mb-3">
+                                <label class="form-label">Card Number</label>
+                                <input type="text" name="card_number" class="form-control custom-pill" maxlength="19" pattern="\d{16,19}" placeholder="1234 5678 9012 3456">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Expiry Date</label>
+                                    <input type="text" name="card_expiry" class="form-control custom-pill" maxlength="5" pattern="\d{2}/\d{2}" placeholder="MM/YY">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">CVV</label>
+                                    <input type="password" name="card_cvv" class="form-control custom-pill" maxlength="4" pattern="\d{3,4}" placeholder="CVV">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Cardholder Name</label>
+                                <input type="text" name="card_name" class="form-control custom-pill" maxlength="50" placeholder="Name on Card">
+                            </div>
+                        </div>
+                        <!-- UPI Payment Fields -->
+                        <div id="upiFields" style="display:none;">
+                            <div class="mb-3">
+                                <label class="form-label">UPI ID</label>
+                                <input type="text" name="upi_id" class="form-control custom-pill" maxlength="50" placeholder="example@upi">
+                            </div>
+                        </div>
+                        <!-- Cash: No extra fields -->
+                        <button type="submit" class="btn btn-success btn-lg w-100 shadow-sm mt-2">
+                            <i class="fas fa-money-check-alt me-2"></i>Pay Now
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const paymentMethod = document.getElementById('payment_method');
+    const cardFields = document.getElementById('cardFields');
+    const upiFields = document.getElementById('upiFields');
+    paymentMethod.addEventListener('change', function() {
+        cardFields.style.display = this.value === 'Card' ? 'block' : 'none';
+        upiFields.style.display = this.value === 'UPI' ? 'block' : 'none';
+    });
+    // Show correct fields on page load
+    window.addEventListener('DOMContentLoaded', function() {
+        const val = paymentMethod.value;
+        cardFields.style.display = val === 'Card' ? 'block' : 'none';
+        upiFields.style.display = val === 'UPI' ? 'block' : 'none';
+    });
+    // Frontend validation
+    document.getElementById('paymentForm').addEventListener('submit', function(e) {
+        let valid = true;
+        if(paymentMethod.value === 'Card') {
+            const cardNumber = this.card_number.value.trim();
+            const cardExpiry = this.card_expiry.value.trim();
+            const cardCVV = this.card_cvv.value.trim();
+            const cardName = this.card_name.value.trim();
+            if(!/^\d{16,19}$/.test(cardNumber.replace(/\s/g, ''))) valid = false;
+            if(!/^\d{2}\/\d{2}$/.test(cardExpiry)) valid = false;
+            if(!/^\d{3,4}$/.test(cardCVV)) valid = false;
+            if(cardName.length < 2) valid = false;
+        } else if(paymentMethod.value === 'UPI') {
+            const upiId = this.upi_id.value.trim();
+            if(!/^\w+@[\w.]+$/.test(upiId)) valid = false;
+        }
+        if(!valid) {
+            e.preventDefault();
+            alert('Please fill in valid payment details.');
+        }
+    });
+</script>
+{% endblock %}

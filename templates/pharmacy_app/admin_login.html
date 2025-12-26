@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Login - PharmaRootz{% endblock %}
+
+{% load widget_tweaks %}
+
+{% block content %}
+<style>
+    /* Ensure our styles override Bootstrap */
+    .custom-pill {
+        border-radius: 50px !important;
+        padding: 12px 18px !important;
+        border: 2px solid #ced4da !important;
+        transition: all 0.3s ease !important;
+        background-color: #fff !important;
+    }
+
+    .custom-pill:focus {
+        border-color: #007BFF !important;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.4) !important;
+        outline: none !important;
+    }
+
+    /* Card Header Gradient */
+    .custom-header {
+        background: linear-gradient(135deg, #0062E6, #33AEFF) !important;
+    }
+
+    /* Button Styling */
+    .btn-custom {
+        background: linear-gradient(135deg, #0062E6, #33AEFF) !important;
+        border: none !important;
+        border-radius: 50px !important;
+        font-weight: bold !important;
+        transition: transform 0.2s ease-in-out !important;
+    }
+
+    .btn-custom:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+    }
+</style>
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+            
+            <!-- Header -->
+            <div class="card-header custom-header text-white text-center py-3">
+                <h3 class="mb-0 fw-bold">
+                    <i class="fas fa-user-shield me-2"></i>Admin Login
+                </h3>
+                <p class="mb-0 small opacity-75">Secure access for administrators</p>
+            </div>
+
+            <!-- Body -->
+            <div class="card-body p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Admin ID -->
+                    <div class="mb-3">
+                        <label for="{{ form.admin_id.id_for_label }}" class="form-label fw-semibold">
+                            <i class="fas fa-user-shield me-2 text-primary"></i>Admin ID *
+                        </label>
+                        {{ form.admin_id|add_class:"form-control form-control-lg custom-pill" }}
+                        {% if form.admin_id.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.admin_id.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Password -->
+                    <div class="mb-4">
+                        <label for="{{ form.password.id_for_label }}" class="form-label fw-semibold">
+                            <i class="fas fa-lock me-2 text-primary"></i>Password *
+                        </label>
+                        {{ form.password|add_class:"form-control form-control-lg custom-pill" }}
+                        {% if form.password.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.password.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-custom btn-lg shadow-sm">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login as Admin
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Links -->
+                <div class="text-center mt-4">
+                    <p class="text-muted mb-1">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Don't have an admin account? 
+                        <a href="{% url 'admin_register' %}" class="fw-semibold text-primary">Register here</a>
+                    </p>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-user me-2"></i>
+                        Are you a customer? 
+                        <a href="{% url 'customer_login' %}" class="fw-semibold text-success">Login as Customer</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
