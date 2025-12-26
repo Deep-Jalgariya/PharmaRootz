@@ -109,4 +109,4 @@ LOGOUT_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = 'store-admin/dashboard'
 
 # Hugging Face API Configuration
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY",'AIzaSyBSh89XtjNIbSWCbj3I6sGMLho5uJ0JkbI')
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY",'your_api_key')
